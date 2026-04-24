@@ -3,242 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WriteAI Pro | Global AI Writing Assistant</title>
+    <title>SentimentAI | Profesyonel Duygu & Dil Laboratuvarı</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         :root {
-            --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #8b5cf6;
+            --bg: #0b0f1a;
+            --card: #161d2f;
+            --border: #2d364d;
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --text-p: #f8fafc;
+            --text-s: #94a3b8;
+            --success: #10b981;
         }
+
         .light-mode {
-            --bg: #f1f5f9; --card: #ffffff; --text: #0f172a; --accent: #6366f1;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text-p: #0f172a;
+            --text-s: #475569;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.2s ease; }
 
         body {
-            margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text);
-            transition: all 0.3s ease; padding: 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-p);
+            line-height: 1.6;
         }
 
-        .navbar { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto 30px; }
-        
-        .container { max-width: 1000px; margin: 0 auto; }
-        
-        .editor-box {
-            background-color: var(--card); padding: 30px; border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: rgba(11, 15, 26, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
         }
 
-        .grid-filters {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--accent); }
+
+        .nav-btns { display: flex; gap: 15px; align-items: center; }
+
+        /* --- MAIN CONTAINER --- */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+
+        .hero-section { text-align: center; margin-bottom: 50px; }
+        .hero-section h1 { font-size: 3rem; margin-bottom: 10px; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* --- EDITOR BOX --- */
+        .main-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-s); text-transform: uppercase; }
 
         select, textarea {
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #475569;
-            background: var(--bg); color: var(--text); font-size: 14px; outline: none;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-p);
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
         }
 
-        textarea { height: 180px; font-size: 16px; margin-top: 10px; }
+        select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        
-        .primary-btn {
-            flex: 2; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white;
-            border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer;
+        textarea { width: 100%; height: 220px; resize: none; margin-top: 10px; font-family: inherit; }
+
+        /* --- BUTTONS --- */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            font-size: 1rem;
         }
 
-        .icon-btn {
-            background: var(--card); border: 1px solid #475569; color: var(--text);
-            padding: 10px 15px; border-radius: 10px; cursor: pointer;
+        .btn-primary { background: var(--accent); color: white; width: 100%; justify-content: center; margin-top: 20px; }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-p); }
+        .btn-outline:hover { background: var(--border); }
+
+        /* --- RESULTS AREA --- */
+        .results-container {
+            display: none;
+            margin-top: 40px;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            animation: slideUp 0.6s ease-out;
         }
 
-        /* Result Section */
-        #results { margin-top: 30px; display: none; animation: fadeIn 0.5s; }
-        .result-card { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 4px solid var(--accent); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Auth & Pay Overlay */
-        .overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
+        .result-box { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 20px; }
+
+        /* --- SENTIMENT BARS --- */
+        .sentiment-item { margin-bottom: 20px; }
+        .sentiment-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; }
+        .progress-rail { background: var(--border); height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, var(--accent), #3b82f6); height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.1, 0, 0.3, 1); }
+
+        /* --- FOOTER UPSERLL --- */
+        .premium-banner {
+            margin-top: 60px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px dashed var(--accent);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
         }
-        .modal { background: var(--card); padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 900px) { .results-container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <h2><i class="fas fa-brain"></i> WriteAI <span style="font-size: 12px; opacity: 0.6;">v2.0 PRO</span></h2>
-        <div>
-            <button class="icon-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
-            <button class="icon-btn" onclick="showModal('auth')">Giriş Yap</button>
-            <button class="primary-btn" onclick="showModal('pay')" style="padding: 10px 20px;">Premium Al 👑</button>
+    <nav>
+        <div class="logo"><i class="fas fa-microchip"></i> SentimentAI</div>
+        <div class="nav-btns">
+            <button class="btn-outline" onclick="toggleTheme()" style="padding: 10px 15px;"><i class="fas fa-moon"></i></button>
+            <button class="btn-outline" onclick="alert('Kayıt sistemi yakında!')">Giriş Yap</button>
+            <button class="btn" style="background: var(--success); color: #fff;" onclick="alert('Ödeme sayfası hazırlanıyor!')">Üye Ol 👑</button>
         </div>
-    </div>
+    </nav>
 
     <div class="container">
-        <div class="editor-box">
-            <div class="grid-filters">
-                <div>
-                    <label>Yaş Grubu</label>
-                    <select id="userAge">
-                        <option value="0-6">0-6 Yaş</option><option value="7-12">7-12 Yaş</option>
-                        <option value="13-18">13-18 Yaş</option><option value="19-24">19-24 Yaş</option>
-                        <option value="25-30">25-30 Yaş</option><option value="31-36">31-36 Yaş</option>
-                        <option value="37-42">37-42 Yaş</option><option value="43-48">43-48 Yaş</option>
-                        <option value="49-54">49-54 Yaş</option><option value="55-60">55-60 Yaş</option>
-                        <option value="61+">61+ Yaş</option>
+        <header class="hero-section">
+            <h1>Metnin Ruhunu Değiştirin</h1>
+            <p style="color: var(--text-s); font-size: 1.2rem;">Yapay zeka ile duyguları analiz edin, dilleri mükemmelleştirin.</p>
+        </header>
+
+        <main class="main-card">
+            <div class="config-grid">
+                <div class="input-group">
+                    <label>Hedef Yaş Grubu</label>
+                    <select id="ageSelect">
+                        <script>
+                            for(let i=0; i<=90; i+=6) {
+                                document.write(`<option value="${i}-${i+6}">${i}-${i+6} Yaş</option>`);
+                            }
+                        </script>
                     </select>
                 </div>
-                <div>
+
+                <div class="input-group">
                     <label>Giriş Dili</label>
-                    <select id="inputLang">
-                        <option value="tr">Türkçe</option><option value="en">İngilizce</option>
-                        <option value="de">Almanca</option><option value="fr">Fransızca</option>
-                        <option value="es">İspanyolca</option><option value="ru">Rusça</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Hedef Dil (Çıkış)</label>
-                    <select id="outputLang">
+                    <select id="langIn">
                         <option value="tr">Türkçe</option><option value="en">İngilizce</option>
                         <option value="de">Almanca</option><option value="fr">Fransızca</option>
                         <option value="es">İspanyolca</option><option value="it">İtalyanca</option>
+                        <option value="ru">Rusça</option><option value="ja">Japonca</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Çıkış Dili</label>
+                    <select id="langOut">
+                        <option value="en">İngilizce</option><option value="tr">Türkçe</option>
+                        <option value="de">Almanca</option><option value="fr">Fransızca</option>
                         <option value="ar">Arapça</option><option value="zh">Çince</option>
                     </select>
                 </div>
-                <div>
+
+                <div class="input-group">
                     <label>Dil Seviyesi</label>
-                    <select id="userLevel">
-                        <option value="A1">A1 - Başlangıç</option><option value="A2">A2 - Temel</option>
-                        <option value="B1">B1 - Orta</option><option value="B2">B2 - Üst Orta</option>
-                        <option value="C1">C1 - İleri</option><option value="C2">C2 - Uzman/Native</option>
+                    <select id="levelSelect">
+                        <option value="A1">A1 - Beginner</option><option value="A2">A2</option>
+                        <option value="B1">B1</option><option value="B2">B2 - Intermediate</option>
+                        <option value="C1">C1</option><option value="C2">C2 - Native / Expert</option>
                     </select>
                 </div>
-                <div>
-                    <label>Kullanım Amacı</label>
-                    <select id="userPurpose">
-                        <option value="business">İş / Profesyonel</option>
-                        <option value="academic">Akademik / Makale</option>
-                        <option value="creative">Yaratıcı Yazarlık / Hikaye</option>
+
+                <div class="input-group">
+                    <label>Yazım Amacı</label>
+                    <select id="purposeSelect">
+                        <option value="formal">Profesyonel / İş</option>
+                        <option value="academic">Akademik Makale</option>
                         <option value="social">Sosyal Medya / Viral</option>
-                        <option value="email">Resmi E-posta</option>
-                        <option value="funny">Mizah / Eğlence</option>
+                        <option value="creative">Edebi / Yaratıcı</option>
+                        <option value="email">Resmi Yazışma</option>
                     </select>
                 </div>
             </div>
 
-            <textarea id="textInput" placeholder="Buraya yazın veya yapıştırın..."></textarea>
+            <textarea id="textInput" placeholder="Analiz edilecek metni buraya girin... (Örn: Bugün hava çok güzel ama içimde garip bir hüzün var.)"></textarea>
             
-            <div class="btn-group">
-                <button class="primary-btn" onclick="analyzeData()" id="mainBtn">Analiz Et & Mükemmelleştir ✨</button>
-                <button class="icon-btn" onclick="copyText()" title="Kopyala"><i class="fas fa-copy"></i></button>
-                <button class="icon-btn" onclick="downloadPDF()" title="PDF İndir"><i class="fas fa-file-pdf"></i></button>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="processText()" id="mainBtn">
+                    <i class="fas fa-wand-magic-sparkles"></i> Analiz Et ve Dönüştür
+                </button>
             </div>
-        </div>
+        </main>
 
-        <div id="results">
-            <div class="result-card">
-                <h3><i class="fas fa-magic"></i> Optimize Edilmiş Metin</h3>
-                <p id="resCorrected" style="font-size: 18px; line-height: 1.6;"></p>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="result-card">
-                    <h4><i class="fas fa-robot"></i> AI Skoru</h4>
-                    <p id="resAi"></p>
+        <section id="resultsSection" class="results-container">
+            <div class="result-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: var(--accent);"><i class="fas fa-check-double"></i> Mükemmelleştirilmiş Metin</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-outline" style="padding: 8px 12px;" onclick="copyText()"><i class="fas fa-copy"></i></button>
+                        <button class="btn-outline" style="padding: 8px 12px;" onclick="exportPDF()"><i class="fas fa-file-pdf"></i></button>
+                    </div>
                 </div>
-                <div class="result-card">
-                    <h4><i class="fas fa-lightbulb"></i> Uzman Notu</h4>
-                    <p id="resFeedback"></p>
+                <p id="correctedText" style="font-size: 1.25rem; white-space: pre-wrap;"></p>
+                
+                <div style="margin-top: 30px; padding: 20px; background: rgba(139, 92, 246, 0.05); border-radius: 12px; border-left: 4px solid var(--accent);">
+                    <strong>💡 Uzman Önerisi:</strong>
+                    <p id="expertAdvice" style="color: var(--text-s); margin-top: 5px;"></p>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div id="modalOverlay" class="overlay" onclick="closeModal()">
-        <div class="modal" onclick="event.stopPropagation()">
-            <div id="modalContent"></div>
-        </div>
+            <div class="result-box">
+                <h3>📊 Duygu Haritası</h3>
+                <p style="color: var(--text-s); font-size: 0.9rem; margin-bottom: 25px;">Metindeki derin duygusal katmanlar</p>
+                <div id="sentimentBars"></div>
+            </div>
+        </section>
+
+        <footer class="premium-banner">
+            <h2>Hala Ücretsiz Sürümü mü Kullanıyorsunuz?</h2>
+            <p style="color: var(--text-s); margin: 15px 0;">Sınırsız OpenAI GPT-4 analizi, toplu dosya işleme ve %100 AI tespiti aşma garantisi için yükseltin.</p>
+            <button class="btn btn-primary" style="width: auto;">Hemen Premium'a Geç - $9.99/Ay</button>
+        </footer>
     </div>
 
     <script>
-        // TEMA DEĞİŞTİRME
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
-            const icon = document.querySelector('.navbar .fa-moon');
+            const icon = document.querySelector('.nav-btns .fa-moon');
             icon.classList.toggle('fa-sun');
         }
 
-        // MODAL YÖNETİMİ
-        function showModal(type) {
-            const overlay = document.getElementById('modalOverlay');
-            const content = document.getElementById('modalContent');
-            overlay.style.display = 'flex';
+        async function processText() {
+            const btn = document.getElementById('mainBtn');
+            const text = document.getElementById('textInput').value;
             
-            if(type === 'auth') {
-                content.innerHTML = `
-                    <h2>Hoş Geldiniz</h2>
-                    <p>Hemen kayıt olun veya giriş yapın.</p>
-                    <button class="primary-btn" style="width:100%; margin-bottom:10px;"><i class="fab fa-google"></i> Google ile Giriş</button>
-                    <button class="icon-btn" style="width:100%;">E-posta ile Giriş</button>
-                `;
-            } else {
-                content.innerHTML = `
-                    <h2>Premium'a Yükselt 👑</h2>
-                    <p>Sınırsız OpenAI analizi ve PDF raporları için.</p>
-                    <h3 style="color:#8b5cf6">$9.99 / Ay</h3>
-                    <button class="primary-btn" style="width:100%;" onclick="alert('Ödeme sistemine yönlendiriliyor...')">Kredi Kartı ile Öde</button>
-                `;
-            }
-        }
-
-        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
-
-        // KOPYALAMA
-        function copyText() {
-            const text = document.getElementById('resCorrected').innerText;
-            navigator.clipboard.writeText(text);
-            alert("Metin kopyalandı!");
-        }
-
-        // PDF İNDİRME
-        async function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("WriteAI Analiz Raporu", 10, 10);
-            doc.text(document.getElementById('resCorrected').innerText, 10, 20);
-            doc.save("analiz-raporu.pdf");
-        }
-
-        // ANALİZ (API BAĞLANTISI)
-        async function analyzeData() {
-            const btn = document.getElementById("mainBtn");
-            const text = document.getElementById("textInput").value;
-            if(!text) return alert("Metin girin!");
-
-            btn.innerText = "Yapay Zeka Çalışıyor... 🧠";
+            if(!text) return alert("Lütfen bir metin girin!");
             
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yapay Zeka Düşünüyor...';
+            btn.disabled = true;
+
             try {
-                const res = await fetch("https://writeai.onrender.com/api/analyze", {
+                const response = await fetch("https://writeai.onrender.com/api/analyze", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({
                         text: text,
-                        age_group: document.getElementById("userAge").value,
-                        learning_level: document.getElementById("userLevel").value,
-                        use_case: document.getElementById("userPurpose").value,
-                        // Not: Arka planı güncellediğimizde bu dilleri de göndereceğiz
+                        age_group: document.getElementById('ageSelect').value,
+                        learning_level: document.getElementById('levelSelect').value,
+                        use_case: document.getElementById('purposeSelect').value,
+                        input_lang: document.getElementById('langIn').value,
+                        output_lang: document.getElementById('langOut').value
                     })
                 });
-                const result = await res.json();
-                document.getElementById("resCorrected").innerText = result.data.grammar_and_suggestions.corrected_text;
-                document.getElementById("resAi").innerText = "%" + result.data.ai_detection.ai_probability;
-                document.getElementById("resFeedback").innerText = result.data.grammar_and_suggestions.contextual_feedback[0];
-                document.getElementById("results").style.display = "block";
+
+                const result = await response.json();
+                const data = result.data;
+
+                // Metni ve öneriyi yazdır
+                document.getElementById('correctedText').innerText = data.grammar_and_suggestions.corrected_text;
+                document.getElementById('expertAdvice').innerText = data.sentiment_analysis.advice;
+
+                // Duygu barlarını oluştur
+                const barContainer = document.getElementById('sentimentBars');
+                barContainer.innerHTML = '';
+                
+                for(const [name, val] of Object.entries(data.sentiment_analysis.scores)) {
+                    barContainer.innerHTML += `
+                        <div class="sentiment-item">
+                            <div class="sentiment-info"><span>${name}</span><span>%${val}</span></div>
+                            <div class="progress-rail"><div class="progress-fill" style="width: ${val}%"></div></div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('resultsSection').style.display = 'grid';
+                window.scrollTo({ top: document.getElementById('resultsSection').offsetTop - 100, behavior: 'smooth' });
+
             } catch (e) {
-                alert("Hata! Render uyanıyor olabilir, lütfen 30 sn sonra tekrar dene.");
+                alert("Hata oluştu! Sunucu uyanıyor olabilir, lütfen 30 saniye sonra tekrar deneyin.");
             }
-            btn.innerText = "Analiz Et & Mükemmelleştir ✨";
+
+            btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analiz Et ve Dönüştür';
+            btn.disabled = false;
+        }
+
+        function copyText() {
+            const t = document.getElementById('correctedText').innerText;
+            navigator.clipboard.writeText(t);
+            alert("Metin panoya kopyalandı!");
+        }
+
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(20);
+            doc.text("SentimentAI Analiz Raporu", 20, 20);
+            doc.setFontSize(12);
+            doc.text("Mükemmelleştirilmiş Metin:", 20, 40);
+            doc.setFontSize(10);
+            doc.text(document.getElementById('correctedText').innerText, 20, 50, { maxWidth: 170 });
+            doc.save("SentimentAI_Raporu.pdf");
         }
     </script>
 </body>
