@@ -1,4 +1,4 @@
-fastapi
-uvicorn
-pydantic
-pip freeze > requirements.txt
+flask
+flask-cors
+gunicorn
+openai
