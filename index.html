@@ -3,339 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SentimentAI | Profesyonel Duygu & Dil Laboratuvarı</title>
+    <title>WriteAi | 8 Dilli Duygu & İçerik Mühendisliği</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         :root {
-            --bg: #0b0f1a;
-            --card: #161d2f;
-            --border: #2d364d;
-            --accent: #8b5cf6;
-            --accent-hover: #7c3aed;
-            --text-p: #f8fafc;
-            --text-s: #94a3b8;
-            --success: #10b981;
+            --bg: #030712; --card: #111827; --border: #1f2937;
+            --accent: #8b5cf6; --accent-hover: #7c3aed;
+            --text-p: #f9fafb; --text-s: #9ca3af; --success: #10b981;
         }
-
         .light-mode {
-            --bg: #f1f5f9;
-            --card: #ffffff;
-            --border: #e2e8f0;
-            --text-p: #0f172a;
-            --text-s: #475569;
+            --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0;
+            --text-p: #0f172a; --text-s: #475569;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-p); }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.2s ease; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-p);
-            line-height: 1.6;
-        }
-
-        /* --- NAVIGATION --- */
         nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            background: rgba(11, 15, 26, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 6%; background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
         }
+        .logo { font-weight: 800; font-size: 1.8rem; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
 
-        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; display: flex; align-items: center; gap: 10px; }
-        .logo i { color: var(--accent); }
-
-        .nav-btns { display: flex; gap: 15px; align-items: center; }
-
-        /* --- MAIN CONTAINER --- */
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .hero { text-align: center; margin-bottom: 40px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .hero-section { text-align: center; margin-bottom: 50px; }
-        .hero-section h1 { font-size: 3rem; margin-bottom: 10px; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* --- EDITOR BOX --- */
-        .main-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .config-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-s); text-transform: uppercase; }
+        .app-card { background: var(--card); border: 1px solid var(--border); border-radius: 32px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        
+        .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field label { font-size: 0.75rem; font-weight: 700; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px; }
 
         select, textarea {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--text-p);
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+            color: var(--text-p); padding: 12px; border-radius: 14px; font-size: 1rem; outline: none;
         }
+        textarea { height: 220px; resize: none; width: 100%; margin-top: 10px; }
 
-        select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
-
-        textarea { width: 100%; height: 220px; resize: none; margin-top: 10px; font-family: inherit; }
-
-        /* --- BUTTONS --- */
-        .btn {
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border: none;
-            font-size: 1rem;
+        .btn-main {
+            background: var(--accent); color: white; border: none; padding: 18px; border-radius: 16px;
+            font-weight: 800; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 20px;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
         }
+        .btn-main:hover { background: var(--accent-hover); transform: translateY(-2px); }
 
-        .btn-primary { background: var(--accent); color: white; width: 100%; justify-content: center; margin-top: 20px; }
-        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
+        .results-wrapper { display: none; margin-top: 40px; grid-template-columns: 1.5fr 1fr; gap: 30px; animation: fadeIn 0.6s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .panel { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 24px; }
+        .s-bar { margin-bottom: 20px; }
+        .s-track { background: var(--border); height: 10px; border-radius: 5px; overflow: hidden; margin-top: 8px; }
+        .s-fill { background: var(--accent); height: 100%; width: 0; transition: 1.5s ease-out; }
 
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-p); }
-        .btn-outline:hover { background: var(--border); }
-
-        /* --- RESULTS AREA --- */
-        .results-container {
-            display: none;
-            margin-top: 40px;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 30px;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .result-box { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 20px; }
-
-        /* --- SENTIMENT BARS --- */
-        .sentiment-item { margin-bottom: 20px; }
-        .sentiment-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; }
-        .progress-rail { background: var(--border); height: 10px; border-radius: 5px; overflow: hidden; }
-        .progress-fill { background: linear-gradient(90deg, var(--accent), #3b82f6); height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.1, 0, 0.3, 1); }
-
-        /* --- FOOTER UPSERLL --- */
-        .premium-banner {
-            margin-top: 60px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
-            border: 1px dashed var(--accent);
-            padding: 40px;
-            border-radius: 24px;
-            text-align: center;
-        }
-
-        @media (max-width: 900px) { .results-container { grid-template-columns: 1fr; } }
+        .lang-badge { padding: 4px 10px; background: var(--border); border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo"><i class="fas fa-microchip"></i> SentimentAI</div>
-        <div class="nav-btns">
-            <button class="btn-outline" onclick="toggleTheme()" style="padding: 10px 15px;"><i class="fas fa-moon"></i></button>
-            <button class="btn-outline" onclick="alert('Kayıt sistemi yakında!')">Giriş Yap</button>
-            <button class="btn" style="background: var(--success); color: #fff;" onclick="alert('Ödeme sayfası hazırlanıyor!')">Üye Ol 👑</button>
+        <div class="logo">Write<span>Ai</span></div>
+        <div style="display: flex; gap: 15px;">
+            <select id="uiLang" onchange="translatePage()" style="width: auto; padding: 5px 15px;">
+                <option value="tr">🇹🇷 Türkçe</option>
+                <option value="en">🇺🇸 English</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="pt">🇵🇹 Português</option>
+            </select>
+            <button onclick="document.body.classList.toggle('light-mode')" class="btn-main" style="width:45px; height:45px; margin:0; border-radius:12px;"><i class="fas fa-moon"></i></button>
         </div>
     </nav>
 
     <div class="container">
-        <header class="hero-section">
-            <h1>Metnin Ruhunu Değiştirin</h1>
-            <p style="color: var(--text-s); font-size: 1.2rem;">Yapay zeka ile duyguları analiz edin, dilleri mükemmelleştirin.</p>
+        <header class="hero">
+            <h1 id="ui-hero-h">WriteAi Master</h1>
+            <p id="ui-hero-p">8 dilde profesyonel içerik üretimi ve derin duygu analizi.</p>
         </header>
 
-        <main class="main-card">
+        <div class="app-card">
             <div class="config-grid">
-                <div class="input-group">
-                    <label>Hedef Yaş Grubu</label>
-                    <select id="ageSelect">
-                        <script>
-                            for(let i=0; i<=90; i+=6) {
-                                document.write(`<option value="${i}-${i+6}">${i}-${i+6} Yaş</option>`);
-                            }
-                        </script>
+                <div class="field">
+                    <label id="lbl-age">Hedef Yaş</label>
+                    <select id="inAge">
+                        <script>for(let i=0; i<=84; i+=6) document.write(`<option value="${i}-${i+6}">${i}-${i+6} Yaş</option>`);</script>
                     </select>
                 </div>
 
-                <div class="input-group">
-                    <label>Giriş Dili</label>
-                    <select id="langIn">
-                        <option value="tr">Türkçe</option><option value="en">İngilizce</option>
-                        <option value="de">Almanca</option><option value="fr">Fransızca</option>
-                        <option value="es">İspanyolca</option><option value="it">İtalyanca</option>
-                        <option value="ru">Rusça</option><option value="ja">Japonca</option>
+                <div class="field">
+                    <label id="lbl-type">İçerik Türü</label>
+                    <select id="inType">
+                        <option value="poem">🌹 Şiir (Poem)</option>
+                        <option value="story">📚 Hikaye (Story)</option>
+                        <option value="formal">💼 Resmi Yazışma</option>
+                        <option value="social">📱 Sosyal Medya</option>
+                        <option value="academic">🎓 Akademik Makale</option>
+                        <option value="lyric">🎵 Şarkı Sözü</option>
                     </select>
                 </div>
 
-                <div class="input-group">
-                    <label>Çıkış Dili</label>
-                    <select id="langOut">
-                        <option value="en">İngilizce</option><option value="tr">Türkçe</option>
-                        <option value="de">Almanca</option><option value="fr">Fransızca</option>
-                        <option value="ar">Arapça</option><option value="zh">Çince</option>
+                <div class="field">
+                    <label id="lbl-in">Giriş Dili</label>
+                    <select id="inLang">
+                        <option value="tr">Türkçe</option><option value="en">English</option>
+                        <option value="de">Deutsch</option><option value="fr">Français</option>
+                        <option value="es">Español</option><option value="it">Italiano</option>
+                        <option value="ru">Русский</option><option value="pt">Português</option>
                     </select>
                 </div>
 
-                <div class="input-group">
-                    <label>Dil Seviyesi</label>
-                    <select id="levelSelect">
-                        <option value="A1">A1 - Beginner</option><option value="A2">A2</option>
-                        <option value="B1">B1</option><option value="B2">B2 - Intermediate</option>
-                        <option value="C1">C1</option><option value="C2">C2 - Native / Expert</option>
+                <div class="field">
+                    <label id="lbl-out">Çıkış Dili</label>
+                    <select id="outLang">
+                        <option value="en">English</option><option value="tr">Türkçe</option>
+                        <option value="de">Deutsch</option><option value="fr">Français</option>
+                        <option value="es">Español</option><option value="it">Italiano</option>
+                        <option value="ru">Русский</option><option value="pt">Português</option>
                     </select>
                 </div>
 
-                <div class="input-group">
-                    <label>Yazım Amacı</label>
-                    <select id="purposeSelect">
-                        <option value="formal">Profesyonel / İş</option>
-                        <option value="academic">Akademik Makale</option>
-                        <option value="social">Sosyal Medya / Viral</option>
-                        <option value="creative">Edebi / Yaratıcı</option>
-                        <option value="email">Resmi Yazışma</option>
+                <div class="field">
+                    <label id="lbl-level">Seviye</label>
+                    <select id="inLevel">
+                        <option value="A1">A1 - Beginner</option>
+                        <option value="B2">B2 - Intermediate</option>
+                        <option value="C2">C2 - Native / Expert</option>
                     </select>
                 </div>
             </div>
 
-            <textarea id="textInput" placeholder="Analiz edilecek metni buraya girin... (Örn: Bugün hava çok güzel ama içimde garip bir hüzün var.)"></textarea>
+            <textarea id="mainInput" placeholder="Analiz edilecek veya dönüştürülecek metni buraya yazın..."></textarea>
             
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="processText()" id="mainBtn">
-                    <i class="fas fa-wand-magic-sparkles"></i> Analiz Et ve Dönüştür
-                </button>
-            </div>
-        </main>
+            <button class="btn-main" onclick="processWriteAi()" id="btn-txt">
+                <i class="fas fa-sparkles"></i> <span>Analiz Et ve Dönüştür</span>
+            </button>
+        </div>
 
-        <section id="resultsSection" class="results-container">
-            <div class="result-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="color: var(--accent);"><i class="fas fa-check-double"></i> Mükemmelleştirilmiş Metin</h3>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn-outline" style="padding: 8px 12px;" onclick="copyText()"><i class="fas fa-copy"></i></button>
-                        <button class="btn-outline" style="padding: 8px 12px;" onclick="exportPDF()"><i class="fas fa-file-pdf"></i></button>
+        <div id="results" class="results-wrapper">
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 id="ui-res-title">WriteAi Sonucu</h3>
+                    <div>
+                        <button onclick="copyToClipboard()" class="lang-badge" style="cursor:pointer; border:none;">Kopyala</button>
+                        <button onclick="exportToPDF()" class="lang-badge" style="cursor:pointer; border:none; background:var(--accent);">PDF</button>
                     </div>
                 </div>
-                <p id="correctedText" style="font-size: 1.25rem; white-space: pre-wrap;"></p>
-                
-                <div style="margin-top: 30px; padding: 20px; background: rgba(139, 92, 246, 0.05); border-radius: 12px; border-left: 4px solid var(--accent);">
-                    <strong>💡 Uzman Önerisi:</strong>
-                    <p id="expertAdvice" style="color: var(--text-s); margin-top: 5px;"></p>
-                </div>
+                <p id="resContent" style="font-size: 1.3rem; margin-top: 20px; line-height: 1.8;"></p>
             </div>
 
-            <div class="result-box">
-                <h3>📊 Duygu Haritası</h3>
-                <p style="color: var(--text-s); font-size: 0.9rem; margin-bottom: 25px;">Metindeki derin duygusal katmanlar</p>
-                <div id="sentimentBars"></div>
+            <div class="panel">
+                <h3 id="ui-sent-title">Duygu Grafiği</h3>
+                <div id="sentimentBars" style="margin-top: 20px;"></div>
             </div>
-        </section>
-
-        <footer class="premium-banner">
-            <h2>Hala Ücretsiz Sürümü mü Kullanıyorsunuz?</h2>
-            <p style="color: var(--text-s); margin: 15px 0;">Sınırsız OpenAI GPT-4 analizi, toplu dosya işleme ve %100 AI tespiti aşma garantisi için yükseltin.</p>
-            <button class="btn btn-primary" style="width: auto;">Hemen Premium'a Geç - $9.99/Ay</button>
-        </footer>
+        </div>
     </div>
 
     <script>
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const icon = document.querySelector('.nav-btns .fa-moon');
-            icon.classList.toggle('fa-sun');
+        // 8 DİLLİ TAM SÖZLÜK
+        const dictionary = {
+            tr: { heroH: "WriteAi Master", heroP: "8 dilde profesyonel içerik üretimi.", btn: "Analiz Et ve Dönüştür", age: "Hedef Yaş", type: "İçerik Türü", in: "Giriş Dili", out: "Çıkış Dili", level: "Seviye", res: "WriteAi Sonucu", sent: "Duygu Grafiği", ph: "Metni buraya yazın..." },
+            en: { heroH: "WriteAi Master", heroP: "Professional content creation in 8 languages.", btn: "Analyze & Transform", age: "Target Age", type: "Content Type", in: "Input Language", out: "Output Language", level: "Level", res: "WriteAi Result", sent: "Sentiment Chart", ph: "Write your text here..." },
+            de: { heroH: "WriteAi Master", heroP: "Professionelle Inhaltsdarstellung in 8 Sprachen.", btn: "Analysieren", age: "Alter", type: "Inhaltstyp", in: "Eingabesprache", out: "Zielsprache", level: "Stufe", res: "WriteAi Ergebnis", sent: "Gefühlsdiagramm", ph: "Text hier schreiben..." },
+            fr: { heroH: "WriteAi Master", heroP: "Création de contenu en 8 langues.", btn: "Analyser & Transformer", age: "Âge", type: "Type", in: "Langue d'entrée", out: "Langue de sortie", level: "Niveau", res: "Résultat", sent: "Graphique d'émotion", ph: "Écrivez ici..." },
+            es: { heroH: "WriteAi Master", heroP: "Creación de contenido en 8 idiomas.", btn: "Analizar y Transformar", age: "Edad", type: "Tipo", in: "Idioma de entrada", out: "Idioma de salida", level: "Nivel", res: "Resultado", sent: "Gráfico de sentimientos", ph: "Escribe aquí..." },
+            it: { heroH: "WriteAi Master", heroP: "Creazione di contenuti in 8 lingue.", btn: "Analizza e Trasforma", age: "Età", type: "Tipo", in: "Lingua d'ingresso", out: "Lingua d'uscita", level: "Livello", res: "Risultato", sent: "Grafico sentimenti", ph: "Scrivi qui..." },
+            ru: { heroH: "WriteAi Master", heroP: "Контент на 8 языках.", btn: "Анализировать", age: "Возраст", type: "Тип", in: "Язык ввода", out: "Язык вывода", level: "Уровень", res: "Результат", sent: "График эмоций", ph: "Пишите здесь..." },
+            pt: { heroH: "WriteAi Master", heroP: "Conteúdo em 8 idiomas.", btn: "Analisar", age: "Idade", type: "Tipo", in: "Entrada", out: "Saída", level: "Nível", res: "Resultado", sent: "Sentimento", ph: "Escreva aqui..." }
+        };
+
+        function translatePage() {
+            const l = document.getElementById('uiLang').value;
+            const t = dictionary[l];
+            document.getElementById('ui-hero-h').innerText = t.heroH;
+            document.getElementById('ui-hero-p').innerText = t.heroP;
+            document.getElementById('btn-txt').querySelector('span').innerText = t.btn;
+            document.getElementById('lbl-age').innerText = t.age;
+            document.getElementById('lbl-type').innerText = t.type;
+            document.getElementById('lbl-in').innerText = t.in;
+            document.getElementById('lbl-out').innerText = t.out;
+            document.getElementById('lbl-level').innerText = t.level;
+            document.getElementById('ui-res-title').innerText = t.res;
+            document.getElementById('ui-sent-title').innerText = t.sent;
+            document.getElementById('mainInput').placeholder = t.ph;
         }
 
-        async function processText() {
-            const btn = document.getElementById('mainBtn');
-            const text = document.getElementById('textInput').value;
+        async function processWriteAi() {
+            const btn = document.getElementById('btn-txt');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             
-            if(!text) return alert("Lütfen bir metin girin!");
-            
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yapay Zeka Düşünüyor...';
-            btn.disabled = true;
-
             try {
                 const response = await fetch("https://writeai.onrender.com/api/analyze", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({
-                        text: text,
-                        age_group: document.getElementById('ageSelect').value,
-                        learning_level: document.getElementById('levelSelect').value,
-                        use_case: document.getElementById('purposeSelect').value,
-                        input_lang: document.getElementById('langIn').value,
-                        output_lang: document.getElementById('langOut').value
+                        text: document.getElementById('mainInput').value,
+                        age_group: document.getElementById('inAge').value,
+                        learning_level: document.getElementById('inLevel').value,
+                        use_case: "general",
+                        input_lang: document.getElementById('inLang').value,
+                        output_lang: document.getElementById('outLang').value,
+                        content_type: document.getElementById('inType').value
                     })
                 });
-
                 const result = await response.json();
-                const data = result.data;
+                const d = result.data;
 
-                // Metni ve öneriyi yazdır
-                document.getElementById('correctedText').innerText = data.grammar_and_suggestions.corrected_text;
-                document.getElementById('expertAdvice').innerText = data.sentiment_analysis.advice;
-
-                // Duygu barlarını oluştur
-                const barContainer = document.getElementById('sentimentBars');
-                barContainer.innerHTML = '';
+                document.getElementById('resContent').innerText = d.grammar_and_suggestions.corrected_text;
                 
-                for(const [name, val] of Object.entries(data.sentiment_analysis.scores)) {
-                    barContainer.innerHTML += `
-                        <div class="sentiment-item">
-                            <div class="sentiment-info"><span>${name}</span><span>%${val}</span></div>
-                            <div class="progress-rail"><div class="progress-fill" style="width: ${val}%"></div></div>
-                        </div>
-                    `;
+                const bars = document.getElementById('sentimentBars');
+                bars.innerHTML = '';
+                for(const [name, val] of Object.entries(d.sentiment_analysis.scores)) {
+                    bars.innerHTML += `
+                        <div class="s-bar">
+                            <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
+                                <span>${name}</span><span>%${val}</span>
+                            </div>
+                            <div class="s-track"><div class="s-fill" style="width:${val}%"></div></div>
+                        </div>`;
                 }
-
-                document.getElementById('resultsSection').style.display = 'grid';
-                window.scrollTo({ top: document.getElementById('resultsSection').offsetTop - 100, behavior: 'smooth' });
-
-            } catch (e) {
-                alert("Hata oluştu! Sunucu uyanıyor olabilir, lütfen 30 saniye sonra tekrar deneyin.");
-            }
-
-            btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analiz Et ve Dönüştür';
-            btn.disabled = false;
+                document.getElementById('results').style.display = 'grid';
+            } catch(e) { alert("Sunucu hatası! Lütfen tekrar deneyin."); }
+            
+            btn.innerHTML = '<i class="fas fa-sparkles"></i> <span>' + dictionary[document.getElementById('uiLang').value].btn + '</span>';
         }
 
-        function copyText() {
-            const t = document.getElementById('correctedText').innerText;
-            navigator.clipboard.writeText(t);
-            alert("Metin panoya kopyalandı!");
-        }
-
-        function exportPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFontSize(20);
-            doc.text("SentimentAI Analiz Raporu", 20, 20);
-            doc.setFontSize(12);
-            doc.text("Mükemmelleştirilmiş Metin:", 20, 40);
-            doc.setFontSize(10);
-            doc.text(document.getElementById('correctedText').innerText, 20, 50, { maxWidth: 170 });
-            doc.save("SentimentAI_Raporu.pdf");
-        }
+        function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('resContent').innerText); alert("Kopyalandı!"); }
+        function exportToPDF() { const doc = new jspdf.jsPDF(); doc.text(document.getElementById('resContent').innerText, 10, 10, {maxWidth: 180}); doc.save("WriteAi.pdf"); }
     </script>
 </body>
 </html>
