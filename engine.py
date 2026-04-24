@@ -198,7 +198,7 @@ class ContentEngine:
             report["seo_analysis"] = self.seo_analysis(text, lang)
             report["poetics"] = self.analyze_poetics(text, lang)
 
-        return report
+        
 
 # ==========================================
 # MOTOR TESTİ (HIZLI DENEME)
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     print("\n--- İnsanlaştırma (Humanize) ---")
     humanized = premium_engine.humanize_text(sample_text, "tr", frontend_dropdown_data, style="academic")
     print(humanized['humanized_text'])
-    import random
+    
 
 class ContentEngine:
     def __init__(self, is_premium=False):
@@ -269,6 +269,55 @@ class ContentEngine:
             },
             "ai_detection": {
                 "ai_probability": random.randint(1, 15) if self.is_premium else 85
+            }
+        }
+        
+
+class ContentEngine:
+    def __init__(self, is_premium=False):
+        self.is_premium = is_premium
+
+    def analyze_sentiment(self, text):
+        emotions = {
+            "Mutluluk/Enerji": random.randint(10, 95),
+            "Resmiyet/Ciddiyet": random.randint(20, 90),
+            "Dramatik/Derinlik": random.randint(30, 85),
+            "Heyecan": random.randint(15, 80),
+            "İkna Gücü": random.randint(40, 95)
+        }
+        return emotions
+
+    def full_analysis_report(self, text, context):
+        emotions = self.analyze_sentiment(text)
+        content_type = context.get("content_type", "general")
+        target_lang = context.get("output_lang", "tr")
+        level = context.get("learning_level", "B2")
+        
+        # Tür bazlı simülasyon (Gerçek AI'da buralar OpenAI'dan gelecek)
+        type_prefix = {
+            "poem": "🌹 [Şiir Formu]",
+            "story": "📚 [Hikaye Formu]",
+            "essay": "✍️ [Akademik Makale]",
+            "social": "📱 [Sosyal Medya Viral]",
+            "formal": "💼 [Resmi Yazışma]"
+        }
+        
+        prefix = type_prefix.get(content_type, "✨ [Mükemmelleştirilmiş]")
+        
+        report = {
+            "grammar_and_suggestions": {
+                "corrected_text": f"{prefix} ({target_lang.upper()} - {level}): {text[:100]}...",
+                "contextual_feedback": [
+                    f"{content_type.capitalize()} türü için ritim ve ton ayarlandı.",
+                    f"{context['age_group']} yaş grubunun ilgisini çekecek kelimeler seçildi."
+                ]
+            },
+            "sentiment_analysis": {
+                "scores": emotions,
+                "advice": "Türün etkisini artırmak için duygusal yoğunluğu %20 artırdık."
+            },
+            "ai_detection": {
+                "ai_probability": random.randint(1, 10) if self.is_premium else 80
             }
         }
         return report
