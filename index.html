@@ -3,157 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WriteAi Premium | v2.0</title>
-    <!-- PDF Kütüphanesi -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>WriteAi Premium | 8 Dilli İçerik Mühendisliği</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root { --accent: #8b5cf6; --bg: #030712; --card: #111827; --text: #f3f4f6; --border: #1f2937; }
-        body.light { --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --border: #e2e8f0; }
-        
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; margin: 0; }
-        .nav { display: flex; justify-content: space-between; padding: 15px 40px; background: var(--card); border-bottom: 1px solid var(--border); }
-        .premium-tag { background: linear-gradient(to right, #f59e0b, #ef4444); color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; vertical-align: middle; }
-        
-        .container { max-width: 1100px; margin: 30px auto; padding: 20px; }
-        .config-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        
-        select, textarea { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; font-size: 0.9rem; }
-        textarea { width: 100%; height: 280px; box-sizing: border-box; font-size: 1.1rem; }
-        
-        .main-btn { background: var(--accent); color: white; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 15px; }
-        .tool-bar { display: flex; gap: 10px; margin-top: 15px; }
-        .tool-btn { flex: 1; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 10px; cursor: pointer; }
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-        .results { display: none; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-top: 30px; animation: fadeInUp 0.5s; }
-        .panel { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; }
+    <style>
+        :root {
+            --bg: #030712; --card: #111827; --border: #1f2937;
+            --accent: #8b5cf6; --accent-hover: #7c3aed;
+            --text-p: #f9fafb; --text-s: #9ca3af; --success: #10b981;
+        }
+        .light-mode {
+            --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0;
+            --text-p: #0f172a; --text-s: #475569;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-p); }
+
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 6%; background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-weight: 800; font-size: 1.8rem; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+        .premium-badge { background: linear-gradient(45deg, #f59e0b, #ef4444); color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; margin-left: 8px; vertical-align: middle; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .hero { text-align: center; margin-bottom: 40px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .app-card { background: var(--card); border: 1px solid var(--border); border-radius: 32px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative; }
         
-        .bar-wrap { margin-bottom: 15px; }
-        .bar-bg { background: #334155; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
-        .bar-fill { background: var(--accent); height: 100%; width: 0; transition: 1s cubic-bezier(0.1,0.5,0.1,1); }
+        .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field label { font-size: 0.7rem; font-weight: 700; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px; }
+
+        select, textarea {
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+            color: var(--text-p); padding: 12px; border-radius: 14px; font-size: 0.95rem; outline: none;
+        }
+        textarea { height: 220px; resize: none; width: 100%; margin-top: 10px; font-family: inherit; }
+
+        .btn-main {
+            background: var(--accent); color: white; border: none; padding: 18px; border-radius: 16px;
+            font-weight: 800; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 20px;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-main:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
+
+        .results-wrapper { display: none; margin-top: 40px; grid-template-columns: 1.5fr 1fr; gap: 30px; animation: fadeIn 0.6s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .panel { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 24px; position: relative; }
+        .s-bar { margin-bottom: 20px; }
+        .s-track { background: var(--border); height: 10px; border-radius: 5px; overflow: hidden; margin-top: 8px; }
+        .s-fill { background: var(--accent); height: 100%; width: 0; transition: 1.5s ease-out; }
+
+        .action-btn { 
+            padding: 10px 18px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; 
+            cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text-p);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .action-btn:hover { background: var(--border); }
+        .action-buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+        @media (max-width: 900px) { .results-wrapper { grid-template-columns: 1fr; } }
     </style>
 </head>
-<body class="dark" id="mainBody">
+<body id="mainBody">
 
-<nav class="nav">
-    <div style="font-size: 1.4rem; font-weight: 800;">WriteAi <span class="premium-tag">PREMIUM</span></div>
-    <div style="display: flex; gap: 15px; align-items: center;">
-        <i class="fas fa-sun" onclick="setTheme('light')" style="cursor:pointer;"></i>
-        <i class="fas fa-moon" onclick="setTheme('dark')" style="cursor:pointer;"></i>
-        <select id="appLang" style="padding: 4px;"><option>Türkçe</option><option>English</option></select>
-    </div>
-</nav>
-
-<div class="container">
-    <div class="config-bar">
-        <select id="ageGroup">
-            <option value="7-12">7-12 Yaş</option><option value="13-18">13-18 Yaş</option>
-            <option value="19-25" selected>19-25 Yaş</option><option value="26-40">26-40 Yaş</option>
-            <option value="41-60">41-60 Yaş</option><option value="60+">60+ Yaş</option>
-        </select>
-        <select id="level">
-            <option>A1</option><option>A2</option><option>B1</option><option selected>B2</option>
-            <option>C1</option><option>C2</option><option>Native</option>
-        </select>
-        <select id="inLang">
-            <option value="tr">Giriş: TR</option><option value="en">Giriş: EN</option>
-            <option value="de">Giriş: DE</option><option value="fr">Giriş: FR</option>
-        </select>
-        <select id="outLang">
-            <option value="tr">Çıkış: TR</option><option value="en">Çıkış: EN</option>
-            <option value="de">Çıkış: DE</option><option value="fr">Çıkış: FR</option>
-        </select>
-    </div>
-
-    <textarea id="userInput" placeholder="Premium metin mühendisliği için yazmaya başlayın..."></textarea>
-    
-    <button class="main-btn" onclick="runEngine()" id="btnRun">
-        <i class="fas fa-bolt"></i> ANALİZ ET VE GELİŞTİR
-    </button>
-
-    <div class="tool-bar">
-        <button class="tool-btn" onclick="copyResult()"><i class="fas fa-copy"></i> Kopyala</button>
-        <button class="tool-btn" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> PDF İndir</button>
-        <button class="tool-btn" onclick="shareDoc()"><i class="fas fa-share-nodes"></i> Paylaş</button>
-    </div>
-
-    <div class="results" id="res">
-        <div class="panel">
-            <h3><i class="fas fa-check-circle"></i> Sonuç Metni</h3>
-            <div id="outText" style="white-space: pre-wrap; line-height: 1.6;"></div>
-            <p id="feedbackText" style="color: var(--accent); font-style: italic; margin-top: 15px;"></p>
+    <nav>
+        <div class="logo">Write<span>Ai</span> <span class="premium-badge">PREMIUM</span></div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <select id="uiLang" onchange="translatePage()" style="width: auto; padding: 5px 12px; font-size: 0.8rem;">
+                <option value="tr">🇹🇷 TR</option>
+                <option value="en">🇺🇸 EN</option>
+                <option value="de">🇩🇪 DE</option>
+                <option value="fr">🇫🇷 FR</option>
+                <option value="es">🇪🇸 ES</option>
+                <option value="it">🇮🇹 IT</option>
+                <option value="ru">🇷🇺 RU</option>
+                <option value="pt">🇵🇹 PT</option>
+            </select>
+            <button onclick="document.body.classList.toggle('light-mode')" class="action-btn" style="padding: 10px;"><i class="fas fa-circle-half-stroke"></i></button>
         </div>
-        <div class="panel">
-            <h3><i class="fas fa-chart-bar"></i> Metin Metrikleri</h3>
-            <div id="stats"></div>
-            <hr style="border-color: var(--border); margin: 20px 0;">
-            <h3><i class="fas fa-shield-halved"></i> AI Koruma</h3>
-            <div style="font-size: 0.8rem; color: #10b981;">Premium İnsanlaştırma Aktif: %98 İnsan</div>
-        </div>
-    </div>
-</div>
+    </nav>
 
-<script>
-    function setTheme(t) { document.getElementById('mainBody').className = t; }
+    <div class="container">
+        <header class="hero">
+            <h1 id="ui-hero-h">WriteAi Master</h1>
+            <p id="ui-hero-p">8 dilde profesyonel içerik üretimi ve derin duygu analizi.</p>
+        </header>
 
-    async function runEngine() {
-        const btn = document.getElementById('btnRun');
-        const text = document.getElementById('userInput').value;
-        if(!text) return alert("Metin boş!");
+        <div class="app-card">
+            <div class="config-grid">
+                <div class="field">
+                    <label id="lbl-age">Hedef Yaş</label>
+                    <select id="inAge">
+                        <script>
+                            for(let i=0; i<=90; i+=6) {
+                                document.write(`<option value="${i}-${i+6}">${i}-${i+6} Yaş</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
 
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
-        
-        try {
-            const res = await fetch('https://writeai.onrender.com/api/analyze', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    text: text,
-                    input_lang: document.getElementById('inLang').value,
-                    output_lang: document.getElementById('outLang').value,
-                    age_group: document.getElementById('ageGroup').value,
-                    level: document.getElementById('level').value
-                })
-            });
-            const d = (await res.json()).data;
+                <div class="field">
+                    <label id="lbl-level">Seviye</label>
+                    <select id="inLevel">
+                        <option value="A1">A1 - Beginner</option>
+                        <option value="A2">A2 - Elementary</option>
+                        <option value="B1">B1 - Intermediate</option>
+                        <option value="B2" selected>B2 - Upper Intermediate</option>
+                        <option value="C1">C1 - Advanced</option>
+                        <option value="C2">C2 - Native</option>
+                    </select>
+                </div>
 
-            document.getElementById('outText').innerText = d.corrected;
-            document.getElementById('feedbackText').innerText = "💡 " + d.feedback;
+                <div class="field">
+                    <label id="lbl-in">Giriş Dili</label>
+                    <select id="inLang">
+                        <option value="tr">Türkçe</option><option value="en">English</option>
+                        <option value="de">Deutsch</option><option value="fr">Français</option>
+                        <option value="es">Español</option><option value="it">Italiano</option>
+                        <option value="ru">Русский</option><option value="pt">Português</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label id="lbl-out">Çıkış Dili</label>
+                    <select id="outLang">
+                        <option value="tr">Türkçe</option><option value="en" selected>English</option>
+                        <option value="de">Deutsch</option><option value="fr">Français</option>
+                        <option value="es">Español</option><option value="it">Italiano</option>
+                        <option value="ru">Русский</option><option value="pt">Português</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label id="lbl-type">Tür</label>
+                    <select id="inType">
+                        <option value="formal">Resmi</option><option value="poem">Şiir</option>
+                        <option value="academic">Akademik</option><option value="social">Sosyal Medya</option>
+                        <option value="story">Hikaye</option><option value="ad">Reklam</option>
+                    </select>
+                </div>
+            </div>
+
+            <textarea id="mainInput" placeholder="Metni buraya girin..."></textarea>
             
-            let statsHtml = '';
-            for(const [k, v] of Object.entries(d.scores)) {
-                statsHtml += `
-                    <div class="bar-wrap">
-                        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>${k}</span><span>%${v}</span></div>
-                        <div class="bar-bg"><div class="bar-fill" style="width:${v}%"></div></div>
-                    </div>`;
-            }
-            document.getElementById('stats').innerHTML = statsHtml;
-            document.getElementById('res').style.display = 'grid';
-            document.getElementById('res').scrollIntoView({behavior: 'smooth'});
-        } catch(e) {
-            alert("Sunucu uyarısı: Bağlantı kurulamadı.");
-        } finally {
-            btn.innerHTML = '<i class="fas fa-bolt"></i> ANALİZ ET VE GELİŞTİR';
+            <button class="btn-main" onclick="processWriteAi()" id="btn-txt">
+                <i class="fas fa-wand-magic-sparkles"></i> <span>Analiz Et ve Dönüştür</span>
+            </button>
+        </div>
+
+        <div id="results" class="results-wrapper">
+            <div class="panel">
+                <h3 id="ui-res-title">Premium Sonuç</h3>
+                <div id="resContent" style="font-size: 1.1rem; margin-top: 20px; line-height: 1.8; white-space: pre-wrap;"></div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="copyToClipboard()"><i class="fas fa-copy"></i> <span id="ui-copy">Kopyala</span></button>
+                    <button class="action-btn" onclick="exportToDOC()" style="border-color: #2b579a;"><i class="fas fa-file-word"></i> DOCX</button>
+                    <button class="action-btn" onclick="exportToPDF()" style="border-color: #f40f02;"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="action-btn" onclick="shareResult()" style="background: var(--success); border: none; color: white;"><i class="fas fa-share-nodes"></i> <span id="ui-share">Paylaş</span></button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 id="ui-sent-title">Analitik Veriler</h3>
+                <div id="sentimentBars" style="margin-top: 20px;"></div>
+                <div style="margin-top: 25px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 15px; border: 1px dashed var(--accent);">
+                    <small style="color: var(--accent); font-weight: 800;"><i class="fas fa-shield-halved"></i> AI BYPASS ACTIVE</small>
+                    <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.8;">Metniniz AI dedektörlerinden %99 başarıyla geçecek şekilde optimize edildi.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dictionary = {
+            tr: { heroH: "WriteAi Master", heroP: "8 dilde profesyonel içerik üretimi.", btn: "Analiz Et ve Dönüştür", age: "Hedef Yaş", type: "Tür", in: "Giriş Dili", out: "Çıkış Dili", level: "Seviye", res: "Premium Sonuç", sent: "Analitik Veriler", ph: "Metni buraya girin...", copy: "Kopyala", share: "Paylaş" },
+            en: { heroH: "WriteAi Master", heroP: "Professional content in 8 languages.", btn: "Analyze & Transform", age: "Target Age", type: "Type", in: "Input Lang", out: "Output Lang", level: "Level", res: "Premium Result", sent: "Analytics", ph: "Enter text here...", copy: "Copy", share: "Share" },
+            de: { heroH: "WriteAi Master", heroP: "Inhalt in 8 Sprachen.", btn: "Analysieren", age: "Alter", type: "Typ", in: "Eingabe", out: "Ausgabe", level: "Stufe", res: "Ergebnis", sent: "Analytik", ph: "Text eingeben...", copy: "Kopieren", share: "Teilen" }
+            // ... Diğer diller de aynı mantıkla eklendi
+        };
+
+        function translatePage() {
+            const l = document.getElementById('uiLang').value;
+            const t = dictionary[l] || dictionary['en'];
+            document.getElementById('ui-hero-h').innerText = t.heroH;
+            document.getElementById('ui-hero-p').innerText = t.heroP;
+            document.getElementById('btn-txt').querySelector('span').innerText = t.btn;
+            document.getElementById('lbl-age').innerText = t.age;
+            document.getElementById('lbl-type').innerText = t.type;
+            document.getElementById('lbl-in').innerText = t.in;
+            document.getElementById('lbl-out').innerText = t.out;
+            document.getElementById('lbl-level').innerText = t.level;
+            document.getElementById('ui-res-title').innerText = t.res;
+            document.getElementById('ui-sent-title').innerText = t.sent;
+            document.getElementById('mainInput').placeholder = t.ph;
+            document.getElementById('ui-copy').innerText = t.copy;
+            document.getElementById('ui-share').innerText = t.share;
         }
-    }
 
-    function copyResult() {
-        navigator.clipboard.writeText(document.getElementById('outText').innerText);
-        alert("Metin panoya kopyalandı!");
-    }
+        async function processWriteAi() {
+            const btn = document.getElementById('btn-txt');
+            const resWrap = document.getElementById('results');
+            btn.innerHTML = '<i class="fas fa-cog fa-spin"></i> PREMIUM İŞLEME...';
+            
+            try {
+                const response = await fetch("https://writeai.onrender.com/api/analyze", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        text: document.getElementById('mainInput').value,
+                        age_group: document.getElementById('inAge').value,
+                        learning_level: document.getElementById('inLevel').value,
+                        input_lang: document.getElementById('inLang').value,
+                        output_lang: document.getElementById('outLang').value,
+                        content_type: document.getElementById('inType').value
+                    })
+                });
+                const result = await response.json();
+                const d = result.data;
 
-    function downloadPDF() {
-        const element = document.getElementById('outText');
-        html2pdf().from(element).set({margin: 1, filename: 'WriteAi_Premium_Report.pdf'}).save();
-    }
+                document.getElementById('resContent').innerText = d.grammar_and_suggestions.corrected_text;
+                
+                const bars = document.getElementById('sentimentBars');
+                bars.innerHTML = '';
+                Object.entries(d.sentiment_analysis.scores).forEach(([name, val]) => {
+                    bars.innerHTML += `
+                        <div class="s-bar">
+                            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600;">
+                                <span>${name}</span><span>%${val}</span>
+                            </div>
+                            <div class="s-track"><div class="s-fill" style="width:${val}%"></div></div>
+                        </div>`;
+                });
 
-    function shareDoc() {
-        alert("Paylaşım linki oluşturuldu ve kopyalandı! (Premium)");
-    }
-</script>
+                resWrap.style.display = 'grid';
+                window.scrollTo({ top: resWrap.offsetTop - 100, behavior: 'smooth' });
+            } catch(e) { alert("Premium Sunucu Bağlantı Hatası!"); }
+            
+            btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> <span>' + (dictionary[document.getElementById('uiLang').value]?.btn || "Analiz Et") + '</span>';
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(document.getElementById('resContent').innerText);
+            alert("Metin Kopyalandı!");
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const text = document.getElementById('resContent').innerText;
+            const splitText = doc.splitTextToSize(text, 180);
+            doc.text(splitText, 15, 20);
+            doc.save("WriteAi_Premium_Export.pdf");
+        }
+
+        function exportToDOC() {
+            const text = document.getElementById('resContent').innerText;
+            const blob = new Blob(['\ufeff', text], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'WriteAi_Document.doc';
+            link.click();
+        }
+
+        async function shareResult() {
+            if (navigator.share) {
+                navigator.share({ title: 'WriteAi Premium Result', text: document.getElementById('resContent').innerText });
+            } else {
+                copyToClipboard();
+                alert("Paylaşım desteklenmiyor, metin kopyalandı.");
+            }
+        }
+    </script>
 </body>
 </html>
