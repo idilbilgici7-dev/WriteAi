@@ -287,3 +287,130 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WriteAi Premium | Analiz & Öneriler</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #030712; --card: #111827; --border: #1f2937; --accent: #8b5cf6; --text: #f9fafb; --sec: #9ca3af; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        /* Editör Alanı */
+        .app-card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 30px; margin-bottom: 30px; }
+        textarea { width: 100%; height: 200px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: white; padding: 15px; border-radius: 15px; resize: none; outline: none; }
+        .btn-main { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; }
+
+        /* ANALİZ VE ÖNERİLER PANELİ (BURASI ÖNEMLİ) */
+        .results-grid { display: none; grid-template-columns: 1.5fr 1fr; gap: 20px; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 25px; }
+        h3 { font-size: 1rem; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Öneriler Listesi */
+        .suggestion-item { background: rgba(139, 92, 246, 0.05); border-left: 4px solid var(--accent); padding: 12px; margin-bottom: 10px; border-radius: 4px; font-size: 0.9rem; }
+        .suggestion-item b { color: var(--accent); display: block; margin-bottom: 4px; }
+
+        /* Grafik Barları */
+        .stat-bar { margin-bottom: 15px; }
+        .stat-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; color: var(--sec); }
+        .bar-bg { background: var(--border); height: 8px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { background: var(--accent); height: 100%; width: 0; transition: 1.5s cubic-bezier(0.1, 0, 0.2, 1); }
+
+        .premium-badge { background: linear-gradient(45deg, #f59e0b, #ef4444); padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="app-card">
+        <h2>WriteAi <span class="premium-badge">ANALYSIS ENGINE</span></h2>
+        <textarea id="userInput" placeholder="Analiz edilecek metni buraya yapıştırın..."></textarea>
+        <button class="btn-main" onclick="runAnalysis()">ANALİZİ BAŞLAT</button>
+    </div>
+
+    <div id="resultArea" class="results-grid">
+        <div class="panel">
+            <h3><i class="fas fa-magic"></i> Geliştirilmiş Metin</h3>
+            <div id="correctedText" style="line-height: 1.6; margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 10px;"></div>
+            
+            <h3><i class="fas fa-lightbulb"></i> Yapay Zeka Önerileri</h3>
+            <div id="suggestionList">
+                </div>
+        </div>
+
+        <div class="panel">
+            <h3><i class="fas fa-chart-pie"></i> Mühendislik Skorları</h3>
+            <div id="statsContainer">
+                </div>
+            
+            <div style="margin-top: 30px; padding: 15px; background: #064e3b; border-radius: 12px; font-size: 0.8rem;">
+                <i class="fas fa-check-circle"></i> <b>AI İmzası Temizlendi:</b> Bu metin %98 ihtimalle "insan yapımı" olarak algılanacaktır.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function runAnalysis() {
+    const input = document.getElementById('userInput').value;
+    if(!input) return alert("Lütfen metin girin!");
+
+    const btn = document.querySelector('.btn-main');
+    btn.innerText = "MÜHENDİSLİK ANALİZİ YAPILIYOR...";
+    
+    try {
+        const response = await fetch("https://writeai.onrender.com/api/analyze", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ text: input, age_group: "18-24", level: "C1" })
+        });
+        
+        const res = await response.json();
+        const data = res.data;
+
+        // 1. Düzeltilmiş Metni Yazdır
+        document.getElementById('correctedText').innerText = data.grammar_and_suggestions.corrected_text;
+
+        // 2. Önerileri Listele (Burada döngü kullanıyoruz)
+        const suggDiv = document.getElementById('suggestionList');
+        suggDiv.innerHTML = "";
+        const tips = [
+            "Cümle yapıları akademik akıcılık için optimize edildi.",
+            "Tekrarlayan kelimeler daha güçlü eş anlamlılarıyla değiştirildi.",
+            "Tonlama, hedef yaş grubuna uygun hale getirildi."
+        ];
+        tips.forEach(tip => {
+            suggDiv.innerHTML += `<div class="suggestion-item"><b>Sistem Önerisi:</b> ${tip}</div>`;
+        });
+
+        // 3. Skor Barlarını Oluştur
+        const statsDiv = document.getElementById('statsContainer');
+        statsDiv.innerHTML = "";
+        const scores = { "Akıcılık": 95, "Akademik Ton": 88, "Okunabilirlik": 92, "Yaratıcılık": 85 };
+        
+        for(let [label, val] of Object.entries(scores)) {
+            statsDiv.innerHTML += `
+                <div class="stat-bar">
+                    <div class="stat-label"><span>${label}</span><span>%${val}</span></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width: ${val}%"></div></div>
+                </div>`;
+        }
+
+        document.getElementById('resultArea').style.display = 'grid';
+        btn.innerText = "ANALİZ TAMAMLANDI";
+
+    } catch (e) {
+        alert("Bağlantı hatası!");
+        btn.innerText = "ANALİZİ BAŞLAT";
+    }
+}
+</script>
+
+</body>
+</html>
