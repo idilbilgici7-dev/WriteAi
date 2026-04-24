@@ -37,3 +37,32 @@ def analyze_content(request: AnalyzeRequest):
         "status": "success", 
         "data": report
     }
+    from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from engine import ContentEngine
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+engine = ContentEngine(is_premium=True)
+
+class AnalyzeRequest(BaseModel):
+    text: str
+    age_group: str
+    learning_level: str
+    use_case: str
+    input_lang: str
+    output_lang: str
+
+@app.post("/api/analyze")
+def analyze_content(request: AnalyzeRequest):
+    context = request.dict()
+    report = engine.full_analysis_report(request.text, context)
+    return {"status": "success", "data": report}
