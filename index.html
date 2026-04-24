@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WriteAI | Profesyonel Yazı Asistanı</title>
+    <style>
+        /* Modern CSS Reset ve Değişkenler */
+        :root {
+            --bg-color: #0f172a; /* Derin Gece Mavisi */
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #8b5cf6; /* Premium Mor */
+            --accent-glow: 0 0 15px rgba(139, 92, 246, 0.5);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(to right, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .editor-box {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        select {
+            flex: 1;
+            padding: 12px;
+            background-color: #0f172a;
+            color: white;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background-color: #0f172a;
+            color: white;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.1rem;
+            resize: vertical;
+            outline: none;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(to right, #8b5cf6, #6366f1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--accent-glow);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.8);
+        }
+
+        /* Sonuç Ekranı Tasarımı */
+        #results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .result-card h3 {
+            margin-top: 0;
+            color: #cbd5e1;
+        }
+
+        .premium-upsell {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px dashed var(--accent);
+            border-radius: 12px;
+        }
+
+        .premium-btn {
+            background-color: transparent;
+            color: #a855f7;
+            border: 2px solid #a855f7;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>WriteAI</h1>
+            <p class="subtitle">Sıradan metinleri, kusursuz şaheserlere dönüştürün.</p>
+        </header>
+
+        <div class="editor-box">
+            <div class="filters">
+                <select id="userAge">
+                    <option value="18-24">18-24 Yaş</option>
+                    <option value="0-12">Çocuk (0-12)</option>
+                    <option value="25-40">Yetişkin (25-40)</option>
+                </select>
+                <select id="userLevel">
+                    <option value="native">Ana Dil (Native)</option>
+                    <option value="A2">Başlangıç (A2)</option>
+                    <option value="B2">Orta-İleri (B2)</option>
+                </select>
+                <select id="userPurpose">
+                    <option value="general">Genel Kullanım</option>
+                    <option value="essay">Makale / Essay</option>
+                    <option value="entertainment">Eğlence / Sosyal Medya</option>
+                </select>
+            </div>
+
+            <textarea id="textInput" placeholder="Analiz edilecek metninizi buraya yapıştırın... (Örn: Yapay zeka çok iyi bir şeydir.)"></textarea>
+            
+            <button class="action-btn" onclick="analyzeData()" id="analyzeBtn">Metni Analiz Et ✨</button>
+        </div>
+
+        <div id="results">
+            <div class="result-card">
+                <h3>✍️ Düzeltilmiş Metin</h3>
+                <p id="resCorrected">Yükleniyor...</p>
+            </div>
+            
+            <div class="result-card">
+                <h3>🤖 Yapay Zeka Tespiti</h3>
+                <p id="resAi">Yükleniyor...</p>
+            </div>
+
+            <div class="result-card">
+                <h3>💡 Profesyonel Öneri</h3>
+                <p id="resFeedback">Yükleniyor...</p>
+            </div>
+
+            <div class="premium-upsell">
+                <h3>👑 Daha Fazlasını İster misiniz?</h3>
+                <p>SEO analizi, kusursuz çeviri ve %100 AI tespiti aşma (Humanizer) özellikleri için yükseltin.</p>
+                <button class="premium-btn">Premium'a Geç - $9.99/Ay</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeData() {
+            const btn = document.getElementById("analyzeBtn");
+            const resultsDiv = document.getElementById("results");
+            
+            // Kullanıcının girdiği verileri al
+            const text = document.getElementById("textInput").value;
+            const age = document.getElementById("userAge").value;
+            const level = document.getElementById("userLevel").value;
+            const purpose = document.getElementById("userPurpose").value;
+
+            if(text.trim() === "") {
+                alert("Lütfen bir metin girin!");
+                return;
+            }
+
+            // Butonu yükleniyor moduna al
+            btn.innerText = "Analiz Ediliyor... ⏳";
+            btn.disabled = true;
+
+            try {
+                // Senin Canlı Render API'ne istek atıyoruz!
+                const response = await fetch("https://writeai.onrender.com/api/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        age_group: age,
+                        learning_level: level,
+                        use_case: purpose
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Gelen verileri ekrana yazdır
+                if(data.status === "success") {
+                    const report = data.data;
+                    document.getElementById("resCorrected").innerText = report.grammar_and_suggestions.corrected_text;
+                    document.getElementById("resAi").innerText = `Skor: %${report.ai_detection.ai_probability} AI. Detay: ${report.ai_detection.premium_detailed_breakdown[0]?.reason || 'Robotik yapı.'}`;
+                    document.getElementById("resFeedback").innerText = report.grammar_and_suggestions.contextual_feedback[0] || "Öneri bulunamadı.";
+                    
+                    // Sonuç ekranını göster
+                    resultsDiv.style.display = "block";
+                }
+
+            } catch (error) {
+                alert("Sunucuya bağlanılamadı. Render uykuda olabilir (ilk açılış 50 sn sürebilir), lütfen biraz bekleyip tekrar deneyin.");
+            }
+
+            // Butonu eski haline getir
+            btn.innerText = "Metni Analiz Et ✨";
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
