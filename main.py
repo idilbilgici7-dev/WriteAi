@@ -1,9 +1,9 @@
 import os
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask import Flask, request, jsonify
+from flask_cors import CORS  # <-- Bu satır mutlaka olmalı
 
 app = Flask(__name__)
-CORS(app) # Tüm istekleri kabul eder
+CORS(app) # <-- Tüm sitelerden gelen isteklere izin verir
 
 @app.route('/')
 def home():
@@ -11,18 +11,24 @@ def home():
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
-    data = request.json
-    return jsonify({
-        "status": "success",
-        "data": {
-            "grammar_and_suggestions": {"corrected_text": "Test başarılı!"},
-            "sentiment_analysis": {"scores": {"Pozitif": 100}}
+    try:
+        data = request.json
+        # ÖNEMLİ: Burada analiz işlemlerini yapmalısın. 
+        # Şimdilik çalıştığını görmek için örnek bir yanıt döndürelim:
+        response_data = {
+            "status": "success",
+            "data": {
+                "grammar_and_suggestions": {
+                    "corrected_text": "API Bağlantısı Başarılı! Gönderdiğin metin: " + data.get('text', '')
+                },
+                "sentiment_analysis": {
+                    "scores": {"Mutluluk": 70, "Nötr": 20, "Üzüntü": 10}
+                }
+            }
         }
-    })
-
-import os
-
-# ... diğer kodların ...
+        return jsonify(response_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
