@@ -1,9 +1,9 @@
 import os
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # <-- Bu satır mutlaka olmalı
+from flask_cors import CORS  # 1. Burayı ekle
 
 app = Flask(__name__)
-CORS(app) # <-- Tüm sitelerden gelen isteklere izin verir
+CORS(app)  # 2. Bu satır tüm bağlantı hatalarını çözer!
 
 @app.route('/')
 def home():
@@ -13,16 +13,15 @@ def home():
 def analyze():
     try:
         data = request.json
-        # ÖNEMLİ: Burada analiz işlemlerini yapmalısın. 
-        # Şimdilik çalıştığını görmek için örnek bir yanıt döndürelim:
+        # Örnek bir yanıt (Sen burayı kendi mantığınla doldurabilirsin)
         response_data = {
             "status": "success",
             "data": {
                 "grammar_and_suggestions": {
-                    "corrected_text": "API Bağlantısı Başarılı! Gönderdiğin metin: " + data.get('text', '')
+                    "corrected_text": "API Bağlantısı Başarılı! Metniniz işlendi."
                 },
                 "sentiment_analysis": {
-                    "scores": {"Mutluluk": 70, "Nötr": 20, "Üzüntü": 10}
+                    "scores": {"Pozitif": 85, "Nötr": 10, "Negatif": 5}
                 }
             }
         }
